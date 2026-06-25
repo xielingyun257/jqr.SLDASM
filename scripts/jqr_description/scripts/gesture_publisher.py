@@ -29,8 +29,13 @@ class GesturePlayer(Node):
         self.pub.publish(msg)
 
     def _spin(self, dt):
-        """spin_once 替代 rate.sleep，避免 block 问题"""
-        rclpy.spin_once(self, timeout_sec=dt)
+        """spin_once + time.sleep 补齐，严格限速 50Hz"""
+        import time
+        t0 = time.perf_counter()
+        rclpy.spin_once(self, timeout_sec=0.001)
+        elapsed = time.perf_counter() - t0
+        if elapsed < dt:
+            time.sleep(dt - elapsed)
 
     def run(self):
         cycle = 0.02  # 50Hz
