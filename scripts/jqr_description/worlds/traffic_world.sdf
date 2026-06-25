@@ -115,7 +115,7 @@
     <!-- 东侧斑马线 (条纹∥东西路, 覆盖全路宽X:-3.5到+3.5) -->
     <model name="zebra_east">
       <static>true</static>
-      <pose>0 5.5 0.065 0 0 0</pose>
+      <pose>0 9 0.065 0 0 0</pose>
       <link name="s1"><pose>-3.5 0 0 0 0 0</pose><visual name="visual"><geometry><box><size>0.5 8.0 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link>
       <link name="s2"><pose>-2.5 0 0 0 0 0</pose><visual name="visual"><geometry><box><size>0.5 8.0 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link>
       <link name="s3"><pose>-1.5 0 0 0 0 0</pose><visual name="visual"><geometry><box><size>0.5 8.0 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link>
@@ -129,7 +129,7 @@
     <!-- 西侧斑马线 -->
     <model name="zebra_west">
       <static>true</static>
-      <pose>0 -5.5 0.065 0 0 0</pose>
+      <pose>0 -9 0.065 0 0 0</pose>
       <link name="s1"><pose>-3.5 0 0 0 0 0</pose><visual name="visual"><geometry><box><size>0.5 8.0 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link>
       <link name="s2"><pose>-2.5 0 0 0 0 0</pose><visual name="visual"><geometry><box><size>0.5 8.0 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link>
       <link name="s3"><pose>-1.5 0 0 0 0 0</pose><visual name="visual"><geometry><box><size>0.5 8.0 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link>
