@@ -20,14 +20,20 @@ class RobotDescriptionPublisher(Node):
             self.get_logger().error('robot_description 参数为空！无法发布。')
             return
 
-        # latched publisher: transient_local 确保后来的订阅者也能收到
+        # 使用 TRANSIENT_LOCAL 确保后来的订阅者也能收到
+        # RViz 配置中需同步设置 Durability Policy: 1 (TRANSIENT_LOCAL)
         qos = rclpy.qos.QoSProfile(
             depth=1,
             durability=rclpy.qos.DurabilityPolicy.TRANSIENT_LOCAL,
+            reliability=rclpy.qos.ReliabilityPolicy.RELIABLE,
         )
-        self.pub = self.create_publisher(String, 'robot_description', qos)
-        self.pub.publish(String(data=robot_desc))
-        self.get_logger().info('robot_description 已发布到话题（latched）')
+        self.pub = self.create_publisher(String, '/robot_description', qos)
+        msg = String(data=robot_desc)
+
+        # 仅发布一次（latched），不重发！
+        # 重发会导致 joint_state_publisher_gui 反复重新初始化，关节弹回原位
+        self.pub.publish(msg)
+        self.get_logger().info('robot_description 已发布到话题（latched，单次）')
 
 
 def main():

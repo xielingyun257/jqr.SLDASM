@@ -18,7 +18,8 @@ Visualization Manager:
       Description Source: Topic
       Description Topic:
         Depth: 5
-        Reliability Policy: 0
+        Durability Policy: 1
+        Reliability Policy: 1
         Value: /robot_description
       Enabled: true
       Name: RobotModel
