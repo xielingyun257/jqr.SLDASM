@@ -1,0 +1,22 @@
+# jqr 双机械臂关节名称列表
+# 共 13 个旋转关节，供后续控制器配置使用
+#
+# 关节分布：
+#   - joint_1:      腰部旋转 (base_link → link_1)
+#   - joint_l_2~7:  左臂 6 轴 (link_1 → Link_l_7)
+#   - joint_r_2~7:  右臂 6 轴 (link_1 → Link_r_7)
+
+controller_joint_names:
+  - joint_1       # 腰部
+  - joint_l_2     # 左肩滚动
+  - joint_l_3     # 左肩俯仰
+  - joint_l_4     # 左肩偏航
+  - joint_l_5     # 左肘滚动
+  - joint_l_6     # 左腕偏航
+  - joint_l_7     # 左手滚动
+  - joint_r_2     # 右肩滚动
+  - joint_r_3     # 右肩俯仰
+  - joint_r_4     # 右肩偏航
+  - joint_r_5     # 右肘滚动
+  - joint_r_6     # 右腕偏航
+  - joint_r_7     # 右手滚动

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>jqr_description</name>
+  <version>1.0.0</version>
+  <description>
+    ROS2 URDF description package for jqr dual-arm humanoid upper-body robot.
+    双机械臂人形上半身机器人 URDF 描述包。
+    运动链：大腿(base_link) → 腰部旋转(joint_1) → 上躯干(link_1) → 左右各6轴机械臂。
+    用于交通指挥手势等双臂协调任务仿真。
+  </description>
+  <author>wdros</author>
+  <maintainer email="wdros@email.com">wdros</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>joint_state_publisher_gui</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
