@@ -7,6 +7,9 @@
       <real_time_update_rate>1000</real_time_update_rate>
     </physics>
 
+    <!-- 削弱重力：10倍降低，减少手臂下垂，使 Gazebo 与 RViz2 运动同步 -->
+    <gravity>0 0 -0.98</gravity>
+
     <light type="directional" name="sun_light">
       <cast_shadows>true</cast_shadows>
       <pose>0 0 15 0 0 0</pose>
