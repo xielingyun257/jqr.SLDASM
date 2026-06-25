@@ -979,7 +979,6 @@
   <gazebo>
     <plugin filename="libign_ros2_control-system.so"
             name="ign_ros2_control::IgnitionROS2ControlPlugin">
-      <parameters>$(find jqr_description)/config/controllers.yaml</parameters>
       <ros>
         <namespace>/</namespace>
       </ros>
