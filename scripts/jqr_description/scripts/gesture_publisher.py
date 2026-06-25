@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""jqr 手势播放器 — 直接发布 /joint_states（同时驱动 Gazebo + RViz2）"""
-
+"""jqr 手势播放器 — 直接发布 /joint_states（驱动 Gazebo + RViz2）"""
 import json, os, sys, time
 import rclpy
 from rclpy.node import Node
@@ -29,17 +28,24 @@ class GesturePlayer(Node):
         msg.position = [float(p) for p in positions]
         self.pub.publish(msg)
 
+    def _spin(self, dt):
+        """spin_once 替代 rate.sleep，避免 block 问题"""
+        rclpy.spin_once(self, timeout_sec=dt)
+
     def run(self):
-        rate = self.create_rate(50)  # 50Hz
+        cycle = 0.02  # 50Hz
         start = self.get_clock().now()
+        print(f'手势目录: {self.gesture_dir}', flush=True)
 
         # 开机先发布 2 秒零位，确保 RViz2 和 Gazebo 从零位开始
         self.get_logger().info('初始化零位...')
         t0 = self.get_clock().now()
+        count = 0
         while (self.get_clock().now() - t0).nanoseconds / 1e9 < 2.0:
             self._pub([0.0]*13, self.get_clock().now().to_msg())
-            rate.sleep()
-        self.get_logger().info('零位就绪，开始手势演示')
+            self._spin(cycle)
+            count += 1
+        self.get_logger().info(f'零位就绪（{count} 帧），开始手势演示')
 
         for gi, g in enumerate(self.gestures):
             name = g['name']
@@ -62,13 +68,13 @@ class GesturePlayer(Node):
                     self._pub(positions, now.to_msg())
                     last_pos = list(positions)
 
-                rate.sleep()
+                self._spin(cycle)
 
             # 手势间停顿
             delay_end = self.get_clock().now()
             while (self.get_clock().now() - delay_end).nanoseconds / 1e9 < 0.5:
                 self._pub(last_pos, self.get_clock().now().to_msg())
-                rate.sleep()
+                self._spin(cycle)
 
         self.get_logger().info('✅ 8个手势全部完成！')
 
@@ -80,7 +86,7 @@ class GesturePlayer(Node):
             frac = min(elapsed / 1.5, 1.0)
             pos = [lp * (1-frac) for lp in last_pos]
             self._pub(pos, now.to_msg())
-            rate.sleep()
+            self._spin(cycle)
 
     def _interp(self, pts, t):
         """在轨迹点之间线性插值"""
@@ -100,11 +106,11 @@ class GesturePlayer(Node):
 def main():
     rclpy.init()
     gd = os.path.join(get_package_share_directory('jqr_description'), 'gestures')
-    print(f'手势目录: {gd}')
     node = GesturePlayer(gd)
     node.run()
     node.destroy_node()
     rclpy.shutdown()
+
 
 if __name__ == '__main__':
     main()
