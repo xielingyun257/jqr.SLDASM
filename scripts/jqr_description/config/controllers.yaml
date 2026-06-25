@@ -1,0 +1,58 @@
+# jqr 双机械臂 ros2_control 控制器配置
+# 使用 joint_trajectory_controller 驱动全部 13 个关节
+
+controller_manager:
+  ros__parameters:
+    update_rate: 100  # Hz
+
+    joint_trajectory_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+joint_trajectory_controller:
+  ros__parameters:
+    joints:
+      - joint_1
+      - joint_l_2
+      - joint_l_3
+      - joint_l_4
+      - joint_l_5
+      - joint_l_6
+      - joint_l_7
+      - joint_r_2
+      - joint_r_3
+      - joint_r_4
+      - joint_r_5
+      - joint_r_6
+      - joint_r_7
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    # 允许目标误差
+    constraints:
+      stopped_velocity_tolerance: 0.01
+      goal_time: 0.0
+    # 轨迹替换策略
+    open_loop_control: true
+    allow_integration_in_goal_trajectories: true
+
+joint_state_broadcaster:
+  ros__parameters:
+    joints:
+      - joint_1
+      - joint_l_2
+      - joint_l_3
+      - joint_l_4
+      - joint_l_5
+      - joint_l_6
+      - joint_l_7
+      - joint_r_2
+      - joint_r_3
+      - joint_r_4
+      - joint_r_5
+      - joint_r_6
+      - joint_r_7
