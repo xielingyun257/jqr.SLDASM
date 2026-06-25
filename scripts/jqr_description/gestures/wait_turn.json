@@ -1,6 +1,6 @@
 {
   "name": "待转",
-  "description": "左臂前伸示意进入待转区",
+  "description": "左臂前伸",
   "joint_names": [
     "joint_1",
     "joint_l_2",

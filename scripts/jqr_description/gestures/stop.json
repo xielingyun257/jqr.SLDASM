@@ -1,6 +1,6 @@
 {
   "name": "停止",
-  "description": "左臂上举掌心向前，示意停车",
+  "description": "左臂上举掌心向前",
   "joint_names": [
     "joint_1",
     "joint_l_2",
