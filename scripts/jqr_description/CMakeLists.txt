@@ -13,4 +13,10 @@ install(DIRECTORY
   DESTINATION share/${PROJECT_NAME}
 )
 
+# 安装 Python 脚本
+install(PROGRAMS
+  scripts/robot_description_publisher.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 ament_package()
