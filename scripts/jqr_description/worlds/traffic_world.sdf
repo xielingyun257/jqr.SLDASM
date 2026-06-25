@@ -8,7 +8,7 @@
     </physics>
 
     <!-- 环境光 -->
-    <light type="directional" name="sun">
+    <light type="directional" name="sun_light">
       <cast_shadows>true</cast_shadows>
       <pose>0 0 15 0 0 0</pose>
       <diffuse>1 1 1 1</diffuse>
