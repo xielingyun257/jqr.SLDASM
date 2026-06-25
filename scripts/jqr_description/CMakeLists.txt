@@ -20,6 +20,7 @@ install(PROGRAMS
   scripts/robot_description_publisher.py
   scripts/gesture_player.py
   scripts/gesture_recorder.py
+  scripts/gz_joint_bridge.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
