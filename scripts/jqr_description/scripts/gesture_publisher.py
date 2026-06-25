@@ -45,48 +45,48 @@ class GesturePlayer(Node):
             self._pub([0.0]*13, self.get_clock().now().to_msg())
             self._spin(cycle)
             count += 1
-        self.get_logger().info(f'零位就绪（{count} 帧），开始手势演示')
+        self.get_logger().info(f'零位就绪（{count} 帧），开始手势演示（循环播放，Ctrl+C 停止）')
 
-        for gi, g in enumerate(self.gestures):
-            name = g['name']
-            pts = g['trajectory']
-            dur = pts[-1]['time']
-            self.get_logger().info(f'[{gi+1}/8] {name} ({dur:.1f}s)')
+        # 循环播放，直到被中断
+        cycle_count = 0
+        while rclpy.ok():
+            cycle_count += 1
+            self.get_logger().info(f'--- 第 {cycle_count} 轮 ---')
 
+            for gi, g in enumerate(self.gestures):
+                name = g['name']
+                pts = g['trajectory']
+                dur = pts[-1]['time']
+                self.get_logger().info(f'[{gi+1}/8] {name} ({dur:.1f}s)')
+
+                t0 = self.get_clock().now()
+                t_elapsed = 0.0
+                last_pos = [0.0]*13
+
+                while t_elapsed < dur + 0.5:
+                    now = self.get_clock().now()
+                    t_elapsed = (now - t0).nanoseconds / 1e9
+
+                    # 找到当前段的插值区间
+                    positions = self._interp(pts, min(t_elapsed, dur))
+
+                    if positions != last_pos or abs(t_elapsed - dur) < 0.01:
+                        self._pub(positions, now.to_msg())
+                        last_pos = list(positions)
+
+                    self._spin(cycle)
+
+                # 手势间停顿
+                delay_end = self.get_clock().now()
+                while (self.get_clock().now() - delay_end).nanoseconds / 1e9 < 0.5:
+                    self._pub(last_pos, self.get_clock().now().to_msg())
+                    self._spin(cycle)
+
+            # 轮间停顿 1 秒
             t0 = self.get_clock().now()
-            t_elapsed = 0.0
-            last_pos = [0.0]*13
-
-            while t_elapsed < dur + 0.5:
-                now = self.get_clock().now()
-                t_elapsed = (now - t0).nanoseconds / 1e9
-
-                # 找到当前段的插值区间
-                positions = self._interp(pts, min(t_elapsed, dur))
-
-                if positions != last_pos or abs(t_elapsed - dur) < 0.01:
-                    self._pub(positions, now.to_msg())
-                    last_pos = list(positions)
-
-                self._spin(cycle)
-
-            # 手势间停顿
-            delay_end = self.get_clock().now()
-            while (self.get_clock().now() - delay_end).nanoseconds / 1e9 < 0.5:
+            while (self.get_clock().now() - t0).nanoseconds / 1e9 < 1.0:
                 self._pub(last_pos, self.get_clock().now().to_msg())
                 self._spin(cycle)
-
-        self.get_logger().info('✅ 8个手势全部完成！')
-
-        # 回到零位
-        t0 = self.get_clock().now()
-        while (self.get_clock().now() - t0).nanoseconds / 1e9 < 2.0:
-            now = self.get_clock().now()
-            elapsed = (now - t0).nanoseconds / 1e9
-            frac = min(elapsed / 1.5, 1.0)
-            pos = [lp * (1-frac) for lp in last_pos]
-            self._pub(pos, now.to_msg())
-            self._spin(cycle)
 
     def _interp(self, pts, t):
         """在轨迹点之间线性插值"""
