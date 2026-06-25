@@ -1,17 +1,15 @@
 <?xml version="1.0" ?>
 <sdf version="1.6">
-  <world name="traffic_world">
-    <!-- 物理引擎 -->
+  <world name="traffic_intersection">
     <physics type="ode">
       <max_step_size>0.001</max_step_size>
       <real_time_factor>1.0</real_time_factor>
       <real_time_update_rate>1000</real_time_update_rate>
     </physics>
 
-    <!-- 光照 -->
     <light type="directional" name="sun">
       <cast_shadows>true</cast_shadows>
-      <pose>0 0 10 0 0 0</pose>
+      <pose>0 0 15 0 0 0</pose>
       <diffuse>1 1 1 1</diffuse>
       <specular>0.5 0.5 0.5 0.5</specular>
       <attenuation>
@@ -28,210 +26,241 @@
       <static>true</static>
       <link name="link">
         <collision name="collision">
-          <geometry>
-            <plane>
-              <normal>0 0 1</normal>
-              <size>50 50</size>
-            </plane>
-          </geometry>
+          <geometry><plane><normal>0 0 1</normal><size>60 60</size></plane></geometry>
         </collision>
         <visual name="visual">
-          <geometry>
-            <plane>
-              <normal>0 0 1</normal>
-              <size>50 50</size>
-            </plane>
-          </geometry>
+          <geometry><plane><normal>0 0 1</normal><size>60 60</size></plane></geometry>
           <material>
-            <ambient>0.3 0.3 0.3 1</ambient>
-            <diffuse>0.5 0.5 0.5 1</diffuse>
+            <ambient>0.3 0.35 0.3 1</ambient>
+            <diffuse>0.4 0.45 0.4 1</diffuse>
           </material>
         </visual>
       </link>
     </model>
 
-    <!-- ===== 马路 ===== -->
-    <model name="road">
+    <!-- ===== 南北向主路 (沿 X 轴) ===== -->
+    <model name="road_ns">
       <static>true</static>
-      <pose>3 0 0 0 0 0</pose>
-      <!-- 主路面（深灰色沥青） -->
-      <link name="road_surface">
+      <pose>0 0 0 0 0 0</pose>
+      <!-- 路面 -->
+      <link name="surface">
         <visual name="visual">
-          <geometry>
-            <box>
-              <size>20 6 0.05</size>
-            </box>
-          </geometry>
+          <geometry><box><size>24 5 0.05</size></box></geometry>
           <material>
-            <ambient>0.2 0.2 0.2 1</ambient>
-            <diffuse>0.25 0.25 0.25 1</diffuse>
+            <ambient>0.15 0.15 0.15 1</ambient>
+            <diffuse>0.2 0.2 0.2 1</diffuse>
           </material>
         </visual>
         <collision name="collision">
-          <geometry>
-            <box>
-              <size>20 6 0.05</size>
-            </box>
-          </geometry>
+          <geometry><box><size>24 5 0.05</size></box></geometry>
         </collision>
       </link>
-
-      <!-- 车道分隔线（白色虚线） -->
+      <!-- 中央分隔虚线 -->
       <link name="center_line">
         <pose>0 0 0.03 0 0 0</pose>
         <visual name="visual">
-          <geometry>
-            <box>
-              <size>18 0.15 0.01</size>
-            </box>
-          </geometry>
-          <material>
-            <ambient>1 1 1 1</ambient>
-            <diffuse>1 1 1 1</diffuse>
-          </material>
-        </visual>
-      </link>
-
-      <!-- ===== 斑马线（黑白相间条纹） ===== -->
-      <!-- 斑马线区域：横穿马路的白色条纹 -->
-      <link name="zebra_1">
-        <pose>-3 0 0.035 0 0 0</pose>
-        <visual name="visual">
-          <geometry><box><size>0.5 5.5 0.01</size></box></geometry>
-          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
-        </visual>
-      </link>
-      <link name="zebra_2">
-        <pose>-2 0 0.035 0 0 0</pose>
-        <visual name="visual">
-          <geometry><box><size>0.5 5.5 0.01</size></box></geometry>
-          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
-        </visual>
-      </link>
-      <link name="zebra_3">
-        <pose>-1 0 0.035 0 0 0</pose>
-        <visual name="visual">
-          <geometry><box><size>0.5 5.5 0.01</size></box></geometry>
-          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
-        </visual>
-      </link>
-      <link name="zebra_4">
-        <pose>0 0 0.035 0 0 0</pose>
-        <visual name="visual">
-          <geometry><box><size>0.5 5.5 0.01</size></box></geometry>
-          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
-        </visual>
-      </link>
-      <link name="zebra_5">
-        <pose>1 0 0.035 0 0 0</pose>
-        <visual name="visual">
-          <geometry><box><size>0.5 5.5 0.01</size></box></geometry>
-          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
-        </visual>
-      </link>
-      <link name="zebra_6">
-        <pose>2 0 0.035 0 0 0</pose>
-        <visual name="visual">
-          <geometry><box><size>0.5 5.5 0.01</size></box></geometry>
-          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
-        </visual>
-      </link>
-      <link name="zebra_7">
-        <pose>3 0 0.035 0 0 0</pose>
-        <visual name="visual">
-          <geometry><box><size>0.5 5.5 0.01</size></box></geometry>
-          <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
+          <geometry><box><size>22 0.12 0.01</size></box></geometry>
+          <material><ambient>0.9 0.9 0.9 1</ambient><diffuse>1 1 1 1</diffuse></material>
         </visual>
       </link>
     </model>
 
-    <!-- ===== 交警站台 ===== -->
+    <!-- ===== 东西向横路 (沿 Y 轴) ===== -->
+    <model name="road_ew">
+      <static>true</static>
+      <pose>0 0 0 0 0 1.5708</pose>  <!-- 旋转90度沿Y轴 -->
+      <!-- 路面 -->
+      <link name="surface">
+        <visual name="visual">
+          <geometry><box><size>24 5 0.05</size></box></geometry>
+          <material>
+            <ambient>0.15 0.15 0.15 1</ambient>
+            <diffuse>0.2 0.2 0.2 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>24 5 0.05</size></box></geometry>
+        </collision>
+      </link>
+      <!-- 中央分隔虚线 -->
+      <link name="center_line">
+        <pose>0 0 0.03 0 0 0</pose>
+        <visual name="visual">
+          <geometry><box><size>22 0.12 0.01</size></box></geometry>
+          <material><ambient>0.9 0.9 0.9 1</ambient><diffuse>1 1 1 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ===== 斑马线 (四条路上各一组) ===== -->
+    <!-- 北侧斑马线 (X正方向，Y=0附近) -->
+    <model name="zebra_north">
+      <static>true</static>
+      <pose>3.5 0 0.04 0 0 0</pose>
+      <link name="z1"><pose>-1.2 0 0 0 0 0</pose><visual name="v"><geometry><box><size>0.5 4.5 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link>
+      <link name="z2"><pose>-0.4 0 0 0 0 0</pose><visual name="v"><geometry><box><size>0.5 4.5 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link>
+      <link name="z3"><pose>0.4 0 0 0 0 0</pose><visual name="v"><geometry><box><size>0.5 4.5 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link>
+      <link name="z4"><pose>1.2 0 0 0 0 0</pose><visual name="v"><geometry><box><size>0.5 4.5 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link>
+    </model>
+
+    <!-- 南侧斑马线 -->
+    <model name="zebra_south">
+      <static>true</static>
+      <pose>-3.5 0 0.04 0 0 0</pose>
+      <link name="z1"><pose>-1.2 0 0 0 0 0</pose><visual name="v"><geometry><box><size>0.5 4.5 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link>
+      <link name="z2"><pose>-0.4 0 0 0 0 0</pose><visual name="v"><geometry><box><size>0.5 4.5 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link>
+      <link name="z3"><pose>0.4 0 0 0 0 0</pose><visual name="v"><geometry><box><size>0.5 4.5 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link>
+      <link name="z4"><pose>1.2 0 0 0 0 0</pose><visual name="v"><geometry><box><size>0.5 4.5 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link>
+    </model>
+
+    <!-- 东侧斑马线 (Y正方向) -->
+    <model name="zebra_east">
+      <static>true</static>
+      <pose>0 3.5 0.04 0 0 1.5708</pose>
+      <link name="z1"><pose>-1.2 0 0 0 0 0</pose><visual name="v"><geometry><box><size>0.5 4.5 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link>
+      <link name="z2"><pose>-0.4 0 0 0 0 0</pose><visual name="v"><geometry><box><size>0.5 4.5 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link>
+      <link name="z3"><pose>0.4 0 0 0 0 0</pose><visual name="v"><geometry><box><size>0.5 4.5 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link>
+      <link name="z4"><pose>1.2 0 0 0 0 0</pose><visual name="v"><geometry><box><size>0.5 4.5 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link>
+    </model>
+
+    <!-- 西侧斑马线 -->
+    <model name="zebra_west">
+      <static>true</static>
+      <pose>0 -3.5 0.04 0 0 1.5708</pose>
+      <link name="z1"><pose>-1.2 0 0 0 0 0</pose><visual name="v"><geometry><box><size>0.5 4.5 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link>
+      <link name="z2"><pose>-0.4 0 0 0 0 0</pose><visual name="v"><geometry><box><size>0.5 4.5 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link>
+      <link name="z3"><pose>0.4 0 0 0 0 0</pose><visual name="v"><geometry><box><size>0.5 4.5 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link>
+      <link name="z4"><pose>1.2 0 0 0 0 0</pose><visual name="v"><geometry><box><size>0.5 4.5 0.01</size></box></geometry><material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material></visual></link>
+    </model>
+
+    <!-- ===== 交警站台（十字路口正中央） ===== -->
     <model name="police_platform">
       <static>true</static>
       <pose>0 0 0.05 0 0 0</pose>
-      <link name="platform">
+      <!-- 底座台阶 -->
+      <link name="base">
+        <pose>0 0 0.1 0 0 0</pose>
         <visual name="visual">
-          <geometry>
-            <cylinder>
-              <radius>0.4</radius>
-              <length>0.3</length>
-            </cylinder>
-          </geometry>
-          <material>
-            <ambient>0.1 0.1 0.3 1</ambient>
-            <diffuse>0.15 0.15 0.5 1</diffuse>
-          </material>
+          <geometry><cylinder><radius>0.6</radius><length>0.2</length></cylinder></geometry>
+          <material><ambient>0.5 0.5 0.5 1</ambient><diffuse>0.6 0.6 0.6 1</diffuse></material>
         </visual>
         <collision name="collision">
-          <geometry>
-            <cylinder>
-              <radius>0.4</radius>
-              <length>0.3</length>
-            </cylinder>
-          </geometry>
+          <geometry><cylinder><radius>0.6</radius><length>0.2</length></cylinder></geometry>
         </collision>
       </link>
-    </model>
-
-    <!-- ===== 车辆 1（轿车，停在斑马线前） ===== -->
-    <model name="car_1">
-      <static>true</static>
-      <pose>5 1.5 0 0 0 0</pose>
-      <link name="body">
-        <visual name="visual_body">
-          <geometry><box><size>4 2 1.2</size></box></geometry>
-          <pose>0 0 0.6 0 0 0</pose>
-          <material><ambient>0.9 0.1 0.1 1</ambient><diffuse>0.9 0.1 0.1 1</diffuse></material>
-        </visual>
-        <visual name="visual_roof">
-          <geometry><box><size>2 1.7 0.6</size></box></geometry>
-          <pose>0 0 1.2 0 0 0</pose>
-          <material><ambient>0.7 0.1 0.1 1</ambient><diffuse>0.7 0.1 0.1 1</diffuse></material>
-        </visual>
-        <collision name="collision">
-          <geometry><box><size>4 2 1.2</size></box></geometry>
-          <pose>0 0 0.6 0 0 0</pose>
-        </collision>
-      </link>
-    </model>
-
-    <!-- ===== 车辆 2（SUV，停在另一侧） ===== -->
-    <model name="car_2">
-      <static>true</static>
-      <pose>-5 -1.5 0 0 0 3.14</pose>
-      <link name="body">
-        <visual name="visual_body">
-          <geometry><box><size>4.5 2.2 1.5</size></box></geometry>
-          <pose>0 0 0.7 0 0 0</pose>
-          <material><ambient>0.1 0.1 0.9 1</ambient><diffuse>0.1 0.1 0.9 1</diffuse></material>
-        </visual>
-        <visual name="visual_roof">
-          <geometry><box><size>2.2 1.9 0.7</size></box></geometry>
-          <pose>0 0 1.4 0 0 0</pose>
-          <material><ambient>0.1 0.1 0.7 1</ambient><diffuse>0.1 0.1 0.7 1</diffuse></material>
-        </visual>
-        <collision name="collision">
-          <geometry><box><size>4.5 2.2 1.5</size></box></geometry>
-          <pose>0 0 0.7 0 0 0</pose>
-        </collision>
-      </link>
-    </model>
-
-    <!-- ===== 车辆 3（小货车，远处） ===== -->
-    <model name="car_3">
-      <static>true</static>
-      <pose>8 3 0 0 0 0</pose>
-      <link name="body">
+      <!-- 上层站台 -->
+      <link name="top">
+        <pose>0 0 0.3 0 0 0</pose>
         <visual name="visual">
-          <geometry><box><size>5 2.3 2</size></box></geometry>
-          <pose>0 0 1 0 0 0</pose>
-          <material><ambient>1 1 0.2 1</ambient><diffuse>1 1 0.2 1</diffuse></material>
+          <geometry><cylinder><radius>0.45</radius><length>0.2</length></cylinder></geometry>
+          <material><ambient>0.1 0.15 0.4 1</ambient><diffuse>0.12 0.18 0.5 1</diffuse></material>
         </visual>
         <collision name="collision">
-          <geometry><box><size>5 2.3 2</size></box></geometry>
-          <pose>0 0 1 0 0 0</pose>
+          <geometry><cylinder><radius>0.45</radius><length>0.2</length></cylinder></geometry>
         </collision>
       </link>
+    </model>
+
+    <!-- ===== 车辆1：红色轿车（北侧路，等待直行） ===== -->
+    <model name="car_1_red">
+      <static>true</static>
+      <pose>8 0.8 0 0 0 0</pose>
+      <!-- 车身 -->
+      <link name="body">
+        <pose>0 0 0.55 0 0 0</pose>
+        <visual name="lower">
+          <geometry><box><size>3.8 1.8 0.9</size></box></geometry>
+          <material><ambient>0.8 0.1 0.1 1</ambient><diffuse>0.9 0.15 0.15 1</diffuse></material>
+        </visual>
+        <visual name="cabin">
+          <geometry><box><size>1.8 1.55 0.55</size></box></geometry>
+          <pose>0.2 0 0.5 0 0 0</pose>
+          <material><ambient>0.6 0.08 0.08 1</ambient><diffuse>0.7 0.12 0.12 1</diffuse></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>3.8 1.8 0.9</size></box></geometry>
+        </collision>
+      </link>
+      <!-- 车轮 -->
+      <link name="wheel_fl"><pose>1.2 1.0 0.3 0 0 0</pose><visual name="v"><geometry><cylinder><radius>0.3</radius><length>0.2</length></cylinder></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material></visual></link>
+      <link name="wheel_fr"><pose>1.2 -1.0 0.3 0 0 0</pose><visual name="v"><geometry><cylinder><radius>0.3</radius><length>0.2</length></cylinder></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material></visual></link>
+      <link name="wheel_rl"><pose>-1.2 1.0 0.3 0 0 0</pose><visual name="v"><geometry><cylinder><radius>0.3</radius><length>0.2</length></cylinder></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material></visual></link>
+      <link name="wheel_rr"><pose>-1.2 -1.0 0.3 0 0 0</pose><visual name="v"><geometry><cylinder><radius>0.3</radius><length>0.2</length></cylinder></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material></visual></link>
+    </model>
+
+    <!-- ===== 车辆2：蓝色SUV（南侧路） ===== -->
+    <model name="car_2_blue">
+      <static>true</static>
+      <pose>-8 1.1 0 0 0 3.1416</pose>
+      <link name="body">
+        <pose>0 0 0.65 0 0 0</pose>
+        <visual name="lower">
+          <geometry><box><size>4.2 2.0 1.0</size></box></geometry>
+          <material><ambient>0.1 0.1 0.7 1</ambient><diffuse>0.12 0.12 0.85 1</diffuse></material>
+        </visual>
+        <visual name="cabin">
+          <geometry><box><size>2.0 1.7 0.6</size></box></geometry>
+          <pose>0.1 0 0.55 0 0 0</pose>
+          <material><ambient>0.08 0.08 0.55 1</ambient><diffuse>0.1 0.1 0.7 1</diffuse></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>4.2 2.0 1.0</size></box></geometry>
+        </collision>
+      </link>
+      <link name="wheel_fl"><pose>1.3 1.1 0.33 0 0 0</pose><visual name="v"><geometry><cylinder><radius>0.33</radius><length>0.22</length></cylinder></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material></visual></link>
+      <link name="wheel_fr"><pose>1.3 -1.1 0.33 0 0 0</pose><visual name="v"><geometry><cylinder><radius>0.33</radius><length>0.22</length></cylinder></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material></visual></link>
+      <link name="wheel_rl"><pose>-1.3 1.1 0.33 0 0 0</pose><visual name="v"><geometry><cylinder><radius>0.33</radius><length>0.22</length></cylinder></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material></visual></link>
+      <link name="wheel_rr"><pose>-1.3 -1.1 0.33 0 0 0</pose><visual name="v"><geometry><cylinder><radius>0.33</radius><length>0.22</length></cylinder></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material></visual></link>
+    </model>
+
+    <!-- ===== 车辆3：白色轿车（东侧路） ===== -->
+    <model name="car_3_white">
+      <static>true</static>
+      <pose>1.0 7 0 0 0 1.5708</pose>
+      <link name="body">
+        <pose>0 0 0.55 0 0 0</pose>
+        <visual name="lower">
+          <geometry><box><size>3.6 1.75 0.85</size></box></geometry>
+          <material><ambient>0.85 0.85 0.85 1</ambient><diffuse>0.95 0.95 0.95 1</diffuse></material>
+        </visual>
+        <visual name="cabin">
+          <geometry><box><size>1.7 1.5 0.5</size></box></geometry>
+          <pose>0.15 0 0.47 0 0 0</pose>
+          <material><ambient>0.7 0.7 0.7 1</ambient><diffuse>0.8 0.8 0.8 1</diffuse></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>3.6 1.75 0.85</size></box></geometry>
+        </collision>
+      </link>
+      <link name="wheel_fl"><pose>1.1 0.95 0.28 0 0 0</pose><visual name="v"><geometry><cylinder><radius>0.28</radius><length>0.2</length></cylinder></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material></visual></link>
+      <link name="wheel_fr"><pose>1.1 -0.95 0.28 0 0 0</pose><visual name="v"><geometry><cylinder><radius>0.28</radius><length>0.2</length></cylinder></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material></visual></link>
+      <link name="wheel_rl"><pose>-1.1 0.95 0.28 0 0 0</pose><visual name="v"><geometry><cylinder><radius>0.28</radius><length>0.2</length></cylinder></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material></visual></link>
+      <link name="wheel_rr"><pose>-1.1 -0.95 0.28 0 0 0</pose><visual name="v"><geometry><cylinder><radius>0.28</radius><length>0.2</length></cylinder></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material></visual></link>
+    </model>
+
+    <!-- ===== 车辆4：黄色出租车（西侧路） ===== -->
+    <model name="car_4_yellow">
+      <static>true</static>
+      <pose>-1.2 -7 0 0 0 -1.5708</pose>
+      <link name="body">
+        <pose>0 0 0.55 0 0 0</pose>
+        <visual name="lower">
+          <geometry><box><size>3.7 1.8 0.85</size></box></geometry>
+          <material><ambient>0.9 0.8 0.1 1</ambient><diffuse>0.95 0.85 0.15 1</diffuse></material>
+        </visual>
+        <visual name="cabin">
+          <geometry><box><size>1.7 1.5 0.5</size></box></geometry>
+          <pose>0.1 0 0.47 0 0 0</pose>
+          <material><ambient>0.7 0.6 0.08 1</ambient><diffuse>0.8 0.7 0.12 1</diffuse></material>
+        </visual>
+        <collision name="collision">
+          <geometry><box><size>3.7 1.8 0.85</size></box></geometry>
+        </collision>
+      </link>
+      <link name="wheel_fl"><pose>1.1 1.0 0.28 0 0 0</pose><visual name="v"><geometry><cylinder><radius>0.28</radius><length>0.2</length></cylinder></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material></visual></link>
+      <link name="wheel_fr"><pose>1.1 -1.0 0.28 0 0 0</pose><visual name="v"><geometry><cylinder><radius>0.28</radius><length>0.2</length></cylinder></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material></visual></link>
+      <link name="wheel_rl"><pose>-1.1 1.0 0.28 0 0 0</pose><visual name="v"><geometry><cylinder><radius>0.28</radius><length>0.2</length></cylinder></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material></visual></link>
+      <link name="wheel_rr"><pose>-1.1 -1.0 0.28 0 0 0</pose><visual name="v"><geometry><cylinder><radius>0.28</radius><length>0.2</length></cylinder></geometry><material><ambient>0.1 0.1 0.1 1</ambient><diffuse>0.15 0.15 0.15 1</diffuse></material></visual></link>
     </model>
 
   </world>
