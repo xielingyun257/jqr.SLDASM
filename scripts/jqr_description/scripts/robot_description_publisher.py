@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """
-将 robot_description 参数发布到 /robot_description 话题（latched）。
+将 robot_description 参数发布到 /rviz_robot_description 话题（latched + 定时重发）。
 
-RViz2 的 RobotModel 显示插件从话题读取 URDF，而 robot_state_publisher
-仅将其设为参数，需要此节点完成参数→话题的转发。
+设计要点：
+  - 使用独立话题 /rviz_robot_description，不与 /robot_description 冲突
+  - joint_state_publisher_gui 订阅的是 /robot_description，不受影响
+  - RViz2 配置指向 /rviz_robot_description，支持定时重发保证可靠性
 """
 import rclpy
 from rclpy.node import Node
@@ -20,20 +22,22 @@ class RobotDescriptionPublisher(Node):
             self.get_logger().error('robot_description 参数为空！无法发布。')
             return
 
-        # 使用 TRANSIENT_LOCAL 确保后来的订阅者也能收到
-        # RViz 配置中需同步设置 Durability Policy: 1 (TRANSIENT_LOCAL)
         qos = rclpy.qos.QoSProfile(
             depth=1,
             durability=rclpy.qos.DurabilityPolicy.TRANSIENT_LOCAL,
             reliability=rclpy.qos.ReliabilityPolicy.RELIABLE,
         )
-        self.pub = self.create_publisher(String, '/robot_description', qos)
-        msg = String(data=robot_desc)
+        # 使用独立话题，避免触发 joint_state_publisher_gui 重置
+        self.pub = self.create_publisher(String, '/rviz_robot_description', qos)
+        self.msg = String(data=robot_desc)
 
-        # 仅发布一次（latched），不重发！
-        # 重发会导致 joint_state_publisher_gui 反复重新初始化，关节弹回原位
-        self.pub.publish(msg)
-        self.get_logger().info('robot_description 已发布到话题（latched，单次）')
+        # 立即发布 + 每 3 秒重发（确保 RViz2 重开时能收到）
+        self.pub.publish(self.msg)
+        self.timer = self.create_timer(3.0, self._publish_callback)
+        self.get_logger().info('robot_description 已发布到 /rviz_robot_description')
+
+    def _publish_callback(self):
+        self.pub.publish(self.msg)
 
 
 def main():
