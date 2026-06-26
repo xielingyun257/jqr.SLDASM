@@ -10,13 +10,12 @@ source /opt/ros/humble/setup.bash
 source "$WS_DIR/install/setup.bash"
 
 echo ">>> 清理..."
-for p in rviz2 robot_state_publisher joint_state_publisher_gui controller_manager; do
+for p in rviz2 robot_state_publisher controller_manager joint_state_publisher_gui; do
     killall -9 $p 2>/dev/null || true
 done
-pkill -9 -f "jqr_description" 2>/dev/null || true
-sleep 1
-ros2 daemon stop 2>/dev/null || true
-ros2 daemon start 2>/dev/null || true
+for p in gesture_publisher.py gesture_player.py robot_description_publisher.py zero_joint_publisher.py; do
+    killall -9 $p 2>/dev/null || true
+done
 sleep 1
 
 echo ">>> 启动控制器模式（RViz2 滑块拖动关节控制）..."

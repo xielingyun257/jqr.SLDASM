@@ -10,16 +10,13 @@ source /opt/ros/humble/setup.bash
 source "$WS_DIR/install/setup.bash"
 
 echo ">>> 清理..."
-# 清理残留进程
 for p in rviz2 robot_state_publisher controller_manager joint_state_publisher_gui; do
     killall -9 $p 2>/dev/null || true
 done
-# 清理 ros2 launch 遗留的孤儿节点（多 publisher 会导致闪回零位）
-pkill -9 -f "jqr_description" 2>/dev/null; true
-sleep 1
-# 重建 ROS2 图
-ros2 daemon stop 2>/dev/null; true
-ros2 daemon start 2>/dev/null; true
+# 清理 ros2 launch 遗留的孤儿节点
+for p in gesture_publisher.py gesture_player.py robot_description_publisher.py zero_joint_publisher.py; do
+    killall -9 $p 2>/dev/null || true
+done
 sleep 1
 
 echo ">>> [1/2] 启动手势发布器（先占 /joint_states，供 RSP 初始化）..."
