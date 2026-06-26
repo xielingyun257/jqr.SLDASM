@@ -1,8 +1,8 @@
 #!/bin/bash
 # ╔══════════════════════════════════════╗
-# ║  jqr 控制器模式 — RViz2             ║
-# ║  无 Gazebo，有控制器                ║
-# ║  ros2_control + trajectory_ctrl     ║
+# ║  jqr 控制器模式 — RViz2 滑块拖动   ║
+# ║  无 Gazebo，无 ros2_control        ║
+# ║  joint_state_publisher_gui → 滑块  ║
 # ╚══════════════════════════════════════╝
 set -e
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
@@ -11,20 +11,17 @@ source /opt/ros/humble/setup.bash
 source "$WS_DIR/install/setup.bash"
 
 echo ">>> 清理..."
-for p in rviz2 robot_state_publisher controller_manager; do
+for p in rviz2 robot_state_publisher joint_state_publisher_gui; do
     killall -9 $p 2>/dev/null || true
 done
 sleep 1
 
-echo ">>> 启动控制器模式..."
-ros2 launch jqr_description controller_rviz.launch.py 2>&1 &
-LAUNCH_PID=$!
+echo ">>> 启动控制器模式（RViz2 滑块拖动关节控制）..."
+ros2 launch jqr_description controller_rviz.launch.py 2>&1
 
 echo ""
-echo "╔════════════════════════════╗"
-echo "║  控制器模式 - RViz2       ║"
-echo "║  gesture_player 终端交互  ║"
-echo "║  Ctrl+C 停止              ║"
-echo "╚════════════════════════════╝"
-
-wait $LAUNCH_PID
+echo "╔══════════════════════════════════════╗"
+echo "║  控制器模式 - RViz2 滑块拖动        ║"
+echo "║  拖动滑块控制关节角度               ║"
+echo "║  Ctrl+C 停止                        ║"
+echo "╚══════════════════════════════════════╝"
