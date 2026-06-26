@@ -13,10 +13,12 @@ echo ">>> 清理..."
 for p in rviz2 robot_state_publisher controller_manager joint_state_publisher_gui; do
     killall -9 $p 2>/dev/null || true
 done
-# 清理 ros2 launch 遗留的孤儿节点
-for p in gesture_publisher.py gesture_player.py robot_description_publisher.py zero_joint_publisher.py; do
-    killall -9 $p 2>/dev/null || true
-done
+# 用安装路径精确杀孤儿 Python 节点（避免误杀本 bash 进程）
+LIB_DIR="$WS_DIR/install/jqr_description/lib/jqr_description"
+pkill -9 -f "$LIB_DIR/gesture_publisher" 2>/dev/null || :
+pkill -9 -f "$LIB_DIR/gesture_player" 2>/dev/null || :
+pkill -9 -f "$LIB_DIR/robot_description_publisher" 2>/dev/null || :
+pkill -9 -f "$LIB_DIR/zero_joint_publisher" 2>/dev/null || :
 sleep 1
 
 echo ">>> [1/2] 启动手势发布器（先占 /joint_states，供 RSP 初始化）..."
