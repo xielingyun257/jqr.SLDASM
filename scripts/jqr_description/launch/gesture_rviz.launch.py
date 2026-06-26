@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """
 RViz2 启动（供手势演示使用）
-仅启动 RSP + description_publisher + RViz2，不启动 zero_joint_publisher
+仅启动 RSP + description_publisher + RViz2，不启动 gesture_publisher
+（gesture_publisher 由 start_gesture_rviz.sh 独立启动）
 """
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
+from launch.actions import TimerAction
 from launch_ros.actions import Node
 
 
@@ -38,12 +40,17 @@ def generate_launch_description():
             parameters=[robot_desc_param],
         ),
 
-        # RViz2
-        Node(
-            package='rviz2',
-            executable='rviz2',
-            name='rviz2',
-            output='screen',
-            arguments=['-d', rviz_file],
+        # RViz2 延迟 2s 启动，确保 /rviz_robot_description 已就绪
+        TimerAction(
+            period=2.0,
+            actions=[
+                Node(
+                    package='rviz2',
+                    executable='rviz2',
+                    name='rviz2',
+                    output='screen',
+                    arguments=['-d', rviz_file],
+                ),
+            ],
         ),
     ])

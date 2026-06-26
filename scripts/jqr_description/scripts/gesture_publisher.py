@@ -97,6 +97,9 @@ class GesturePlayer(Node):
         """在轨迹点之间线性插值"""
         if len(pts) == 1:
             return list(pts[0]['positions'])
+        # 边界：t 在轨迹时间范围之前 → 返回第一帧
+        if t <= pts[0]['time']:
+            return list(pts[0]['positions'])
         for i in range(len(pts)-1):
             t0 = pts[i]['time']
             t1 = pts[i+1]['time']
@@ -105,6 +108,7 @@ class GesturePlayer(Node):
                 p0 = pts[i]['positions']
                 p1 = pts[i+1]['positions']
                 return [p0[j] + frac*(p1[j]-p0[j]) for j in range(len(p0))]
+        # 边界：t 超过轨迹末尾 → 返回最后一帧
         return list(pts[-1]['positions'])
 
 

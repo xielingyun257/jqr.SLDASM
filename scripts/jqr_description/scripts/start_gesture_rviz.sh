@@ -16,7 +16,7 @@ for p in rviz2 robot_state_publisher controller_manager; do
 done
 sleep 1
 
-echo ">>> [1/2] 启动手势发布器..."
+echo ">>> [1/2] 启动手势发布器（先占 /joint_states，供 RSP 初始化）..."
 ros2 run jqr_description gesture_publisher.py 2>&1 &
 GESTURE_PID=$!
 sleep 3
