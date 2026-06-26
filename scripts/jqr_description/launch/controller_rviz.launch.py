@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 """
-jqr 控制器模式 — RViz2 滑块拖动关节控制
+jqr 控制器模式 — 纯 RViz2（无 Gazebo）
 
-基于 display.launch.py，纯 RViz2 可视化 + GUI 滑块：
-  - 1. robot_state_publisher（TF 变换树）
-  - 2. robot_description_publisher（/rviz_robot_description，供 RViz2）
-  - 3. joint_state_publisher_gui（GUI 滑块控制关节角度）
-  - 4. rviz2（3D 可视化）
-
-⚠ 不含 Gazebo，不含 ros2_control
+基于 traffic_gesture.launch.py，移除 Gazebo 相关组件：
+  - 1. ros2_control_node + joint_trajectory_controller + joint_state_broadcaster
+  - 2. robot_state_publisher（TF）
+  - 3. RViz2（可视化）
+  - 4. gesture_player（终端交互）
 
 用法：
   ros2 launch jqr_description controller_rviz.launch.py
@@ -17,7 +15,7 @@ jqr 控制器模式 — RViz2 滑块拖动关节控制
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
+from launch.actions import ExecuteProcess, TimerAction, LogInfo
 from launch_ros.actions import Node
 
 
@@ -26,6 +24,7 @@ def generate_launch_description():
 
     urdf_file = os.path.join(pkg_dir, 'urdf', 'jqr.SLDASM.urdf')
     rviz_file = os.path.join(pkg_dir, 'rviz', 'display.rviz')
+    controllers_file = os.path.join(pkg_dir, 'config', 'controllers.yaml')
 
     with open(urdf_file, 'r') as f:
         robot_desc = f.read()
@@ -33,22 +32,51 @@ def generate_launch_description():
     robot_desc_param = {'robot_description': robot_desc}
 
     return LaunchDescription([
-        DeclareLaunchArgument(
-            'model',
-            default_value=urdf_file,
-            description='URDF 模型文件路径'
-        ),
-
-        # 1. robot_state_publisher: 发布 TF 变换
+        # ============================================================
+        # 1. ros2_control 控制节点
+        # ============================================================
         Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            name='robot_state_publisher',
+            package='controller_manager',
+            executable='ros2_control_node',
+            name='controller_manager',
             output='screen',
-            parameters=[robot_desc_param],
+            parameters=[controllers_file, robot_desc_param],
         ),
 
-        # 2. 将 URDF 发布到 /rviz_robot_description（独立话题，不影响 GUI）
+        # 加载 joint_state_broadcaster
+        TimerAction(
+            period=3.0,
+            actions=[
+                ExecuteProcess(
+                    cmd=[
+                        'ros2', 'run', 'controller_manager', 'spawner',
+                        'joint_state_broadcaster',
+                    ],
+                    output='screen',
+                    name='spawn_broadcaster',
+                ),
+            ],
+        ),
+
+        # 加载 joint_trajectory_controller
+        TimerAction(
+            period=4.0,
+            actions=[
+                ExecuteProcess(
+                    cmd=[
+                        'ros2', 'run', 'controller_manager', 'spawner',
+                        'joint_trajectory_controller',
+                        '-c', '/controller_manager',
+                    ],
+                    output='screen',
+                    name='spawn_controller',
+                ),
+            ],
+        ),
+
+        # ============================================================
+        # 2. robot_description_publisher（RViz2 需要独立 topic）
+        # ============================================================
         Node(
             package='jqr_description',
             executable='robot_description_publisher.py',
@@ -57,16 +85,20 @@ def generate_launch_description():
             parameters=[robot_desc_param],
         ),
 
-        # 3. GUI 关节滑块控制（从参数获取 URDF）
+        # ============================================================
+        # 3. robot_state_publisher (TF)
+        # ============================================================
         Node(
-            package='joint_state_publisher_gui',
-            executable='joint_state_publisher_gui',
-            name='joint_state_publisher_gui',
+            package='robot_state_publisher',
+            executable='robot_state_publisher',
+            name='robot_state_publisher',
             output='screen',
             parameters=[robot_desc_param],
         ),
 
-        # 4. RViz2 可视化（从 /rviz_robot_description topic 加载 URDF）
+        # ============================================================
+        # 4. RViz2 可视化
+        # ============================================================
         Node(
             package='rviz2',
             executable='rviz2',
@@ -74,4 +106,22 @@ def generate_launch_description():
             output='screen',
             arguments=['-d', rviz_file],
         ),
+
+        # ============================================================
+        # 5. gesture_player（终端交互 - FollowJointTrajectory action）
+        # ============================================================
+        TimerAction(
+            period=6.0,
+            actions=[
+                ExecuteProcess(
+                    cmd=[
+                        'ros2', 'run', 'jqr_description', 'gesture_player.py',
+                    ],
+                    output='screen',
+                    name='gesture_player',
+                ),
+            ],
+        ),
+
+        LogInfo(msg='jqr 控制器模式 — 纯 RViz2（无 Gazebo）启动中...'),
     ])
