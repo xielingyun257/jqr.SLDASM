@@ -29,20 +29,25 @@ class RobotDescriptionPublisher(Node):
         )
         self.msg = String(data=robot_desc)
 
-        # 发布到 /robot_description（joint_state_publisher 需要）
-        self.pub_rd = self.create_publisher(String, '/robot_description', qos)
-        # 发布到 /rviz_robot_description（RViz2 需要，独立话题）
+        # /rviz_robot_description：RViz2 加载模型用
         self.pub_rviz = self.create_publisher(String, '/rviz_robot_description', qos)
-
-        # 定期重发（确保晚加入的订阅者能收到）
-        self.timer = self.create_timer(3.0, self._publish_callback)
-        # 立即尝试发布（spin 后会真正发出）
-        self._publish_callback()
-        self.get_logger().info('robot_description 已发布到 /robot_description + /rviz_robot_description')
-
-    def _publish_callback(self):
-        self.pub_rd.publish(self.msg)
         self.pub_rviz.publish(self.msg)
+
+        # /robot_description：给 joint_state_publisher_gui 初始化用
+        # 延迟 1 秒发一次（等 GUI 订阅就绪），之后不再重发（否则 GUI 重置归零）
+        self.pub_rd = self.create_publisher(String, '/robot_description', qos)
+        self.pub_rd.publish(self.msg)
+        self._retry_count = 0
+        self._retry_timer = self.create_timer(1.0, self._retry_robot_desc)
+
+        self.get_logger().info('robot_description 已发布（/rviz_robot_description + /robot_description 各一次）')
+
+    def _retry_robot_desc(self):
+        self._retry_count += 1
+        if self._retry_count <= 2:
+            self.pub_rd.publish(self.msg)
+        else:
+            self._retry_timer.cancel()  # 停掉定时器，不再重发
 
 
 def main():
